@@ -11,11 +11,11 @@ import {
 } from './mathUtils';
 
 function App() {
-  const [formula, setFormula] = useState<string>('r_1^2 * h');
+  const [formula, setFormula] = useState<string>('2pi*L*m*(r_1^2 + r_2^2)/(T_1^2 - T_2^2)');
   
   // 实时变量字典，格式为 { "r_1": 1.2 }
-  const [values, setValues] = useState<Record<string, number>>({ r_1: 2.0, h: 5.0 });
-  const [errors, setErrors] = useState<Record<string, number>>({ r_1: 0.1, h: 0.2 });
+  const [values, setValues] = useState<Record<string, number>>({});
+  const [errors, setErrors] = useState<Record<string, number>>({});
 
   // 记忆解析变量和生成的 LaTeX，减少渲染卡顿
   const extractedVars = useMemo(() => extractVariables(formula), [formula]);
@@ -52,8 +52,8 @@ function App() {
         <div className="max-w-md mx-auto flex items-center gap-3">
           <Calculator className="w-8 h-8" />
           <div>
-            <h1 className="text-xl font-bold tracking-tight">大物实验计算神器</h1>
-            <p className="text-blue-100 text-sm opacity-90">支持变量识别 · 自动生成误差公式</p>
+            <h1 className="text-xl font-bold tracking-tight">大物实验计算器</h1>
+            <p className="text-blue-100 text-sm opacity-90">composed by 五水 · 支持变量识别 · 自动生成误差公式</p>
           </div>
         </div>
       </header>
@@ -73,7 +73,7 @@ function App() {
             onChange={(e) => setFormula(e.target.value)}
           />
           <p className="text-xs text-slate-500 mt-2">
-            提示：支持加减乘除(* /)、乘方(^)、对数(log)、三角函数(sin)等，下划线如 <code className="bg-slate-100 px-1 rounded">r_1</code> 会自动显示为下标。
+            提示：支持加减乘除(* /)、乘方(^)、对数(log)、三角函数(sin)等，下划线如 <code className="bg-slate-100 px-1 rounded">r_1</code> 会自动显示为下标，输入pi可自动识别为 π。
           </p>
 
           {/* 公式预览 */}
