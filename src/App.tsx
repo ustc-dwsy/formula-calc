@@ -11,7 +11,7 @@ import {
 } from './mathUtils';
 
 function App() {
-  const [formula, setFormula] = useState<string>('2pi*L*m*(r_1^2 + r_2^2)/(T_1^2 - T_2^2)');
+  const [formula, setFormula] = useState<string>('2pi*L * m*(r_1^2 +r_2^2)/(R^4 * (T_1^2 - T_2^2))');
   
   // 实时变量字典，格式为 { "r_1": 1.2 }
   const [values, setValues] = useState<Record<string, number>>({});
