@@ -53,7 +53,7 @@ function App() {
           <Calculator className="w-8 h-8" />
           <div>
             <h1 className="text-xl font-bold tracking-tight">大物实验计算器</h1>
-            <p className="text-blue-100 text-sm opacity-90">composed by 五水 · 支持变量识别 · 自动生成误差公式</p>
+            <p className="text-blue-100 text-sm opacity-90">Developed by 五水 · 支持变量识别 · 自动生成误差公式</p>
           </div>
         </div>
       </header>
