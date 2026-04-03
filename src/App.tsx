@@ -1,10 +1,11 @@
+// App.tsx
 import { useState, useMemo } from 'react';
 import 'katex/dist/katex.min.css';
 import { BlockMath, InlineMath } from 'react-katex';
 import { Calculator, AlertCircle } from 'lucide-react';
 import {
   extractVariables,
-  generateRelativeErrorTex,
+  generateRelativeErrorTerms,
   calculateResults,
   formatVarTex,
   previewFormulaTex
@@ -19,7 +20,7 @@ function App() {
 
   // 记忆解析变量和生成的 LaTeX，减少渲染卡顿
   const extractedVars = useMemo(() => extractVariables(formula), [formula]);
-  const relativeErrorTex = useMemo(() => generateRelativeErrorTex(formula, extractedVars), [formula, extractedVars]);
+  const relativeErrorTerms = useMemo(() => generateRelativeErrorTerms(formula, extractedVars), [formula, extractedVars]);
   
   // 检查公式格式是否合法
   const isValidFormula = extractedVars.length > 0 || formula.trim() === '';
@@ -87,15 +88,40 @@ function App() {
           )}
         </section>
 
-        {/* 相对误差公式展示 */}
-        {isValidFormula && relativeErrorTex && (
+        {/* 相对误差公式展示 - 各项独立显示 */}
+        {isValidFormula && relativeErrorTerms.length > 0 && (
           <section className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-2xl shadow-sm border border-blue-100 p-5">
-            <label className="block text-sm font-semibold text-indigo-900 mb-2 flex items-center gap-2">
+            <label className="block text-sm font-semibold text-indigo-900 mb-3 flex items-center gap-2">
               <Calculator className="w-4 h-4" />
-              2. 相对误差公式
+              2. 相对误差各项
             </label>
-            <div className="overflow-x-auto overflow-y-hidden pb-2 whitespace-nowrap scrollbar-hide text-indigo-950">
-              <BlockMath math={relativeErrorTex} />
+            <div className="space-y-3">
+              {relativeErrorTerms.map((term, index) => (
+                <div 
+                  key={term.variable} 
+                  className="bg-white/60 rounded-xl p-3 border border-indigo-100"
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs font-medium text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-full">
+                      第 {index + 1} 项
+                    </span>
+                    <span className="text-xs text-indigo-500">
+                      关于 <InlineMath math={formatVarTex(term.variable)} />
+                    </span>
+                  </div>
+                  <div className="overflow-x-auto overflow-y-hidden whitespace-nowrap scrollbar-hide text-indigo-950">
+                    <BlockMath math={term.termTex} />
+                  </div>
+                </div>
+              ))}
+              
+              {/* 汇总公式 */}
+              {/* <div className="mt-4 pt-3 border-t border-indigo-200/50">
+                <div className="text-xs font-medium text-indigo-600 mb-2">汇总公式</div>
+                <div className="overflow-x-auto overflow-y-hidden whitespace-nowrap scrollbar-hide text-indigo-950">
+                  <BlockMath math={`E_r = \\frac{\\Delta f}{f} = ${relativeErrorTerms.map(t => t.termTex).join(' + ')}`} />
+                </div>
+              </div> */}
             </div>
           </section>
         )}

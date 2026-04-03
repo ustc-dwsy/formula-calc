@@ -1,3 +1,4 @@
+// mathUtils.ts
 import { parse, derivative, simplify } from 'mathjs';
 
 // 排除的内置常数和函数名，不作为独立变量
@@ -57,13 +58,13 @@ export function extractVariables(formula: string): string[] {
 }
 
 /**
- * 推导相对误差公式，返回格式化后的 LaTeX 字符串
- * Er = \sum \left| \frac{\partial f}{\partial x_i} \frac{1}{f} \right| \Delta x_i
+ * 生成相对误差的各个独立项
+ * 返回格式: { variable: string, termTex: string }[]
  */
-export function generateRelativeErrorTex(formula: string, vars: string[]): string {
+export function generateRelativeErrorTerms(formula: string, vars: string[]): { variable: string; termTex: string }[] {
     try {
         const fNode = parse(formula);
-        const terms: string[] = [];
+        const terms: { variable: string; termTex: string }[] = [];
         
         for (const v of vars) {
             // 对变量求偏导 df / dv
@@ -78,14 +79,16 @@ export function generateRelativeErrorTex(formula: string, vars: string[]): strin
             tex = formatVarTex(tex);
             const vTex = formatVarTex(v);
             
-            // 添加绝对值和 Delta
-            terms.push(`\\left| ${tex} \\right| \\Delta ${vTex}`);
+            // 单独的项：绝对值乘以 Delta
+            terms.push({
+                variable: v,
+                termTex: `\\left| ${tex} \\right| \\Delta ${vTex}`
+            });
         }
         
-        if (terms.length === 0) return 'E_r = 0';
-        return 'E_r = \\frac{\\Delta f}{f} = ' + terms.join(' + ');
+        return terms;
     } catch (e) {
-        return '';
+        return [];
     }
 }
 
